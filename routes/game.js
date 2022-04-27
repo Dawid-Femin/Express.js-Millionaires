@@ -74,12 +74,31 @@ const questions = [
                 text: 'To koło ratunkowe zostało już wykorzystane',
             });
         }
+        callToAFriendUsed = true;
         const doesFriendKnowAnswer = Math.random() < 0.5;
         const question = questions[goodAnswers];
         res.json({
             text: doesFriendKnowAnswer ? `Wydaje mi się że odpowiedź to ${question.answers[question.correctAnswer]}` : 'Hmm ... no nie wiem ...',
         });
-        callToAFriendUsed = true;
+    });
+
+    app.get('/help/halfonhalf', (req, res) => {
+        if(halfOnHalfUsed) {
+            return res.json({
+                text: 'To koło ratunkowe zostało już wykorzystane',
+            });
+        }
+        
+        halfOnHalfUsed = true;
+        const question = questions[goodAnswers];
+        const answersCopy = question.answers.filter((s, index) => (
+            index !== question.correctAnswer
+        ));
+        answersCopy.splice(Math.floor(Math.random() * answersCopy.length), 1);
+
+        res.json({
+            answersToRemove: answersCopy,
+        });
     });
 }
 

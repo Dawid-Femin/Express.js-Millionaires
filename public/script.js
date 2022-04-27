@@ -1,6 +1,7 @@
 const question = document.querySelector('#question');
 const gameBoard = document.querySelector('#gameBoard');
 const h2 = document.querySelector('h2');
+const tip = document.querySelector('#tip');
 
 function fillQuestionElements(data) {
     if(data.winner === true) {
@@ -51,12 +52,17 @@ function sendAnswer(answerIndex) {
     });
 }
 
-const buttons = document.querySelectorAll('answer-btn');
+const buttons = document.querySelectorAll('.answer-btn');
 for(const button of buttons) {
     button.addEventListener('click', function() {
         const answerIndex = this.dataset.answer;
         sendAnswer(answerIndex);
+        tip.innerText = '';
     });
+}
+
+function handleFriendAnswer(data) {
+    tip.innerText = data.text;
 }
 
 function callToAFriend() {
@@ -65,8 +71,33 @@ function callToAFriend() {
         })
         .then(res => res.json())
         .then(data => {
-            console.log(data);
+            handleFriendAnswer(data);
         });
     }
 
     document.querySelector('#callToAFriend').addEventListener('click', callToAFriend);
+
+
+    function handlerHalfOnHalf(data) {
+        if(typeof data.text === 'string') {
+            tip.innerText = data.text;
+        } else {
+            for(const button of buttons) {
+                if(data.answersToRemove.indexOf(button.innerText) > -1) {
+                    button.style="display: none";
+                }
+            }
+        }
+    };
+
+    function HalfOnHalf() {
+        fetch('/help/halfonhalf', {
+            method: 'GET',
+        })
+        .then(res => res.json())
+        .then(data => {
+            handlerHalfOnHalf(data);
+        });
+    }
+
+    document.querySelector('#halfOnHalf').addEventListener('click', HalfOnHalf);
