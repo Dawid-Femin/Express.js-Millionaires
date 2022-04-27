@@ -3,7 +3,6 @@ const gameBoard = document.querySelector('#gameBoard');
 const h2 = document.querySelector('h2');
 
 function fillQuestionElements(data) {
-
     if(data.winner === true) {
         gameBoard.style.display='none';
         h2.innerText = "WYGRAŁEŚ!";
@@ -25,7 +24,7 @@ function fillQuestionElements(data) {
 }
 
 function showNextQuestion() {
-    fetch('./question', {
+    fetch('/question', {
         method: 'GET',
     })
     .then(response => response.json())
@@ -35,7 +34,6 @@ function showNextQuestion() {
 }
 
 showNextQuestion();
-
 const goodAnswersSpan = document.querySelector('#good-answers');
 
 function handleAnswerFeedback(data){
@@ -44,7 +42,7 @@ function handleAnswerFeedback(data){
 }
 
 function sendAnswer(answerIndex) {
-    fetch(`./answer/${answerIndex}`, {
+    fetch(`/answer/${answerIndex}`, {
         method: 'POST',
     })
     .then(response => response.json())
@@ -53,11 +51,22 @@ function sendAnswer(answerIndex) {
     });
 }
 
-const buttons = document.querySelectorAll('button');
+const buttons = document.querySelectorAll('answer-btn');
 for(const button of buttons) {
     button.addEventListener('click', function() {
         const answerIndex = this.dataset.answer;
-        console.log(answerIndex);     
         sendAnswer(answerIndex);
     });
 }
+
+function callToAFriend() {
+        fetch('/help/friend', {
+            method: 'GET',
+        })
+        .then(res => res.json())
+        .then(data => {
+            console.log(data);
+        });
+    }
+
+    document.querySelector('#callToAFriend').addEventListener('click', callToAFriend);

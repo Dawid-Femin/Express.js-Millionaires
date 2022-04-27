@@ -48,16 +48,13 @@ const questions = [
     });
 
     app.post('/answer/:index', (req, res) => {
-
         if(isGameOver) {
             res.json({
                 loser: true
-            })
-        }
-
+            });
+        };
         const { index } = req.params;
         const question = questions[goodAnswers];
-
         const isGoodAnswer = question.correctAnswer === Number(index);
 
         if (isGoodAnswer) {
@@ -65,11 +62,24 @@ const questions = [
         } else {
             isGameOver = true
         }
-
             res.json({
                 correct: isGoodAnswer,
                 goodAnswers,
             });
+    });
+
+    app.get('/help/friend', (req, res) => {
+        if(callToAFriendUsed) {
+            return res.json({
+                text: 'To koło ratunkowe zostało już wykorzystane',
+            });
+        }
+        const doesFriendKnowAnswer = Math.random() < 0.5;
+        const question = questions[goodAnswers];
+        res.json({
+            text: doesFriendKnowAnswer ? `Wydaje mi się że odpowiedź to ${question.answers[question.correctAnswer]}` : 'Hmm ... no nie wiem ...',
+        });
+        callToAFriendUsed = true;
     });
 }
 
