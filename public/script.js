@@ -77,14 +77,14 @@ function callToAFriend() {
 
     document.querySelector('#callToAFriend').addEventListener('click', callToAFriend);
 
-
-    function handlerHalfOnHalf(data) {
+    function handleHalfOnHalf(data) {
         if(typeof data.text === 'string') {
             tip.innerText = data.text;
         } else {
             for(const button of buttons) {
                 if(data.answersToRemove.indexOf(button.innerText) > -1) {
-                    button.style="display: none";
+                    // button.style="display: none";
+                    button.innerText='';
                 }
             }
         }
@@ -96,8 +96,31 @@ function callToAFriend() {
         })
         .then(res => res.json())
         .then(data => {
-            handlerHalfOnHalf(data);
+            handleHalfOnHalf(data);
         });
     }
 
     document.querySelector('#halfOnHalf').addEventListener('click', HalfOnHalf);
+
+    function handlerQuestionToTheCrowd(data) {
+         console.log(data)
+         if(typeof data.text === 'string'){
+             tip.innerText = data.text;
+         } else {
+             data.chart.forEach((percent, index) => {
+                 buttons[index].innerText = `${buttons[index].innerText}: ${percent}%`;
+             });
+         }
+    };
+
+    function questionToTheCrowd() {
+        fetch('/help/crowd', {
+            method: 'GET',
+        })
+        .then(res => res.json())
+        .then(data => {
+            handlerQuestionToTheCrowd(data);
+        });
+    }
+
+    document.querySelector('#questionToTheCrowd').addEventListener('click', questionToTheCrowd);
